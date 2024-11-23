@@ -71,6 +71,8 @@ app.get("/rankings", async (req, res) => {
 app.post("/add-ranking", async (req, res) => {
   const { nickname, score } = req.body;
   console.log("Received new score submission:", { nickname, score }); // 디버깅 로그
+  const clientIp = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
+  console.log("Client IP detected:", clientIp); 
 
   try {
     const fetch = (await import("node-fetch")).default;
@@ -111,6 +113,8 @@ app.get("/test-ip", async (req, res) => {
 
 // 정적 파일 서빙
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 // 서버 시작
 app.listen(3000, () => {
