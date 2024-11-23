@@ -6,6 +6,7 @@ const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
+app.set("trust proxy", true);
 
 // Neo4j 드라이버 설정
 const driver = neo4j.driver("bolt+s://18c363b9.databases.neo4j.io:7687", neo4j.auth.basic("neo4j", "G-nOZZdbqIVLjHPrdRwk5Xk72vqO8_JmKYn-YwHqxOs"));
