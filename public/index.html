@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="123.jpeg"/> 
+  <link rel="apple-touch-icon" href="123.jpeg"/> 
+  <title>Coffee man</title>
+  <style>
+    /* 스톱워치 스타일 */
+    .stopwatch {
+      text-align: center;
+      font-size: 75px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    /* 바 전체 영역 스타일 */
+    .gauge-container {
+      width: 100%;
+      max-width: 500px;
+      height: 30px;
+      background-color: #ddd;
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 20px auto;
+      position: relative;
+    }
+
+    /* 빨간색 게이지 바 스타일 */
+    .gauge-bar-red {
+      width: 0%;
+      height: 100%;
+      background-color: red;
+      transition: width 0.3s ease;
+      position: absolute;
+      z-index: 1;
+    }
+
+    /* 초록색 게이지 바 스타일 */
+    .gauge-bar-green {
+      width: 100%;
+      height: 100%;
+      background-color: green;
+      transition: width 0.3s ease;
+      position: absolute;
+      z-index: 1;
+    }
+
+    /* 게이지 수치 및 텍스트 스타일 */
+    .gauge-info {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: black;
+      font-weight: bold;
+      z-index: 2;
+    }
+
+    .gauge-text {
+      position: absolute;
+      top: 100%;
+      left: 10px;
+      font-size: 12px;
+      color: black;
+      font-weight: normal;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+/* 이모티콘 버튼 스타일 */
+.emoji-button {
+  background-color: transparent;
+  border: none;
+  font-size: 140px;
+  cursor: pointer;
+  text-align: center;
+  display: block;
+  margin: 20px auto;
+  color: #555;
+  outline: none;
+}
+
+.emoji-button:disabled {
+  color: #ddd;
+  cursor: not-allowed;
+}
+
+.emoji-button:hover {
+  color: #333;
+}
+
+
+    /* 시작 버튼 스타일 */
+    .start-button {
+      display: block;
+      width: 120px;
+      height: 40px;
+      margin: 20px auto;
+      font-size: 16px;
+      text-align: center;
+      line-height: 40px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .start-button:hover {
+      background-color: #45a049;
+    }
+
+    /* 다시하기 버튼 스타일 */
+    .restart-button {
+      display: block;
+      width: 150px;
+      height: 40px;
+      margin: 20px auto;
+      font-size: 16px;
+      text-align: center;
+      line-height: 40px;
+      background-color: #FF5722;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .restart-button:hover {
+      background-color: #e64a19;
+    }
+
+    /* 게임 오버 창 스타일 */
+    .game-over {
+      display: none;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: red;
+      margin-top: 20px;
+    }
+
+    /* 심장병 창 스타일 */
+    .heart-disease {
+      display: none;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: red;
+      margin-top: 20px;
+    }
+
+    /* 이모티콘 스타일 */
+    .emoji {
+      position: absolute;
+      font-size: 24px;
+      animation: floatEmojiUp 2s linear forwards; /* 변경된 애니메이션 */
+      z-index: 2;
+    }
+
+    /* 이모티콘 애니메이션: 위로 올라가면서 점점 사라짐 */
+    @keyframes floatEmojiUp {
+      0% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px); /* 위로 이동 */
+        opacity: 0; /* 점점 투명해짐 */
+      }
+    }
+    /* 전체 화면 버튼 스타일 */
+    #fullscreenButton {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    #fullscreenButton img {
+      width: 32px; /* 아이콘 너비 */
+      height: 32px; /* 아이콘 높이 */
+    }
+
+    #nicknamePopup {
+      display: none; /* 팝업이 기본적으로 숨김 상태 */
+      position: fixed;
+      top: 20%;
+      left: 20%;
+      width: 60%;
+      background: white;
+      padding: 20px;
+      border: 2px solid black;
+      z-index: 1000;
+    }
+
+  </style>
+</head>
+<body>
+  <button id="fullscreenButton" onclick="toggleFullscreen()">
+    <img src="fullscreen_icon_137565.png" alt="전체 화면">
+  </button>
+
+
+
+
+  <!-- 랭킹 버튼 -->
+<button id="rankingButton" onclick="toggleRanking()">🏆 World Ranking</button>
+
+<!-- 랭킹 팝업 -->
+<div id="rankingPopup" style="display: none; position: fixed; top: 10%; left: 10%; width: 80%; height: 80%; background: white; border: 2px solid black; overflow-y: scroll; z-index: 1000;">
+  <div style="text-align: right;">
+    <button onclick="toggleRanking()">Close</button>
+  </div>
+  <h2>🏆 World Ranking</h2>
+  <ol id="rankingList"></ol>
+</div>
+
+<script>
+  function toggleRanking() {
+    const popup = document.getElementById("rankingPopup");
+    popup.style.display = popup.style.display === "none" ? "block" : "none";
+  }
+
+  async function loadRankings() {
+    try {
+      const API_BASE_URL = window.location.origin; // 현재 배포된 도메인 동적으로 설정
+      const response = await fetch(`${API_BASE_URL}/rankings`); // 동적 URL 사용
+      const rankings = await response.json();
+
+      const rankingList = document.getElementById("rankingList");
+      rankingList.innerHTML = "";
+
+      rankings.forEach((rank, index) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"})`;
+        rankingList.appendChild(listItem);
+      });
+    } catch (error) {
+      console.error("Error loading rankings:", error);
+    }
+  }
+
+
+  document.getElementById("rankingButton").addEventListener("click", loadRankings);
+</script>
+
+
+
+<div id="nicknamePopup" style="display: none; position: fixed; top: 20%; left: 20%; width: 60%; background: white; padding: 20px; border: 2px solid black; z-index: 1000;">
+  <h3>👏 New record! Please enter your nickname! 👏</h3>
+  <input type="text" id="nicknameInput" placeholder="nickname"/>
+  <button onclick="submitScore()">Save</button>
+</div>
+
+<script>
+async function submitScore() {
+  const nickname = document.getElementById("nicknameInput").value;
+
+  if (!nickname) {
+    alert("Please enter your nickname!");
+    return;
+  }
+
+  try {
+    const stopwatchValue = parseFloat(document.getElementById("stopwatch").textContent);
+    await fetch("http://localhost:3000/add-ranking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nickname, score: stopwatchValue }),
+    });
+
+    alert("Added to ranking! 🏆");
+
+    // 팝업 창 숨기기 및 입력 필드 초기화
+    document.getElementById("nicknamePopup").style.display = "none";
+    document.getElementById("nicknameInput").value = "";
+  } catch (error) {
+    console.error("Error submitting score:", error);
+  }
+}
+
+
+
+  function checkNewRecord() {
+    const stopwatchValue = parseFloat(document.getElementById("stopwatch").textContent);
+
+    fetch("http://localhost:3000/rankings")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(rankings => {
+        console.log("Rankings fetched successfully:", rankings);
+        const lowestScore = rankings[rankings.length - 1]?.score || 0;
+        if (rankings.length < 100 || stopwatchValue > lowestScore) {
+          document.getElementById("nicknamePopup").style.display = "block";
+        } else {
+          console.log("Not a new record. Current score:", stopwatchValue);
+        }
+      })
+      .catch(error => console.error("Error fetching rankings:", error));
+
+  }
+</script>
+
+
+
+
+  <div class="stopwatch" id="stopwatch">0.00</div>
+
+  <div style="text-align:center; margin: 20px;">
+    <img id="gifImage" src="gif1.gif" alt="Current GIF" style="width: 200px; height: 200px;">
+  </div>
+
+  <div class="gauge-container">
+    <div class="gauge-bar-red" id="gaugeBarRed"></div>
+    <div class="gauge-info" id="redGaugeValue">BPM 🫀 80</div>
+    <div class="gauge-text" id="redGaugeText">빨간색 게이지</div>
+  </div>
+
+  <div class="gauge-container">
+    <div class="gauge-bar-green" id="gaugeBarGreen"></div>
+    <div class="gauge-info" id="greenGaugeValue">Sleep 😴 40</div>
+    <div class="gauge-text" id="greenGaugeText">초록색 게이지</div>
+  </div>
+
+  <button class="restart-button" id="restartButton" onclick="restartGame()" style="display:none;">try again ❤️‍🩹</button>
+    <div class="game-over" id="gameOver">Game Over! The coffee man fell asleep. 😪💤</div>
+  <div class="heart-disease" id="heartDisease">Game Over! Coffee Man has heart disease! 😵 💔</div>
+
+  <button class="start-button" id="startButton" onclick="start()">Start</button>
+  <button class="emoji-button" id="clickButton" onclick="adjustGauges()" disabled>☕️</button>
+
+  <script>
+        function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+          console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+      } else {
+          document.exitFullscreen();
+      }
+    }
+    let redGaugeValue = 80;
+    let greenGaugeValue = 40;
+    let stopwatchTime = 0;
+    let isStarted = false;
+    let currentGifRange = 0;
+    let gameOver = false;
+    let heartDisease = false;
+
+    function updateStopwatch() {
+      if (isStarted && !gameOver && !heartDisease) {
+        stopwatchTime += 0.01;
+        document.getElementById("stopwatch").textContent = stopwatchTime.toFixed(2);
+      }
+    }
+
+    function decreaseRedGauge() {
+      if (isStarted && !gameOver && !heartDisease && redGaugeValue > 80) {
+        redGaugeValue -= 1;
+        const redGaugeWidth = (redGaugeValue / 200) * 100;
+        document.getElementById("gaugeBarRed").style.width = redGaugeWidth + "%";
+        document.getElementById("redGaugeValue").textContent = redGaugeValue;
+        changeGifBasedOnRedGauge(redGaugeValue);
+      }
+    }
+
+    function increaseGreenGauge() {
+      if (isStarted && !gameOver && !heartDisease && greenGaugeValue < 100) {
+        greenGaugeValue += 1;
+        const greenGaugeWidth = (greenGaugeValue / 100) * 100;
+        document.getElementById("gaugeBarGreen").style.width = greenGaugeWidth + "%";
+        document.getElementById("greenGaugeValue").textContent = greenGaugeValue;
+
+        if (greenGaugeValue >= 100) {
+          gameOver = true;
+          document.getElementById("gameOver").style.display = "block";
+          document.getElementById("restartButton").style.display = "block";
+          document.getElementById("clickButton").disabled = true;
+          changeGifOnGameOver(); // 초록색 게이지가 100일 때 GIF 변경
+          checkNewRecord(); // 신기록 확인 함수 호출 추가
+        }
+      }
+    }
+
+    setInterval(updateStopwatch, 10);
+    setInterval(decreaseRedGauge, 100);
+    setInterval(increaseGreenGauge, 100);
+
+    function adjustGauges() {
+      if (greenGaugeValue > 0 && !gameOver && !heartDisease) {
+        let randomGreenDecrease = Math.floor(Math.random() * 4) + 1;
+        greenGaugeValue -= randomGreenDecrease;
+        if (greenGaugeValue < 0) greenGaugeValue = 0;
+        const greenGaugeWidth = (greenGaugeValue / 100) * 100;
+        document.getElementById("gaugeBarGreen").style.width = greenGaugeWidth + "%";
+        document.getElementById("greenGaugeValue").textContent = greenGaugeValue;
+      }
+
+      if (redGaugeValue < 200) {
+        let randomRedIncrease = Math.floor(Math.random() * 5) + 2;
+        redGaugeValue += randomRedIncrease;
+        if (redGaugeValue > 200) redGaugeValue = 200;
+        const redGaugeWidth = (redGaugeValue / 200) * 100;
+        document.getElementById("gaugeBarRed").style.width = redGaugeWidth + "%";
+        document.getElementById("redGaugeValue").textContent = redGaugeValue;
+
+        if (redGaugeValue === 200) {
+          heartDisease = true;
+          document.getElementById("heartDisease").style.display = "block";
+          document.getElementById("restartButton").style.display = "block";
+          document.getElementById("clickButton").disabled = true;
+          checkNewRecord(); // 신기록 확인 함수 호출 추가
+        }
+      }
+
+      createFloatingEmoji(); // 이모티콘 생성
+    }
+
+    function changeGifBasedOnRedGauge(value) {
+      const gifImage = document.getElementById("gifImage");
+      let newGifRange = currentGifRange;
+
+      if (value >= 80 && value < 120) {
+        newGifRange = 1;
+      } else if (value >= 120 && value < 180) {
+        newGifRange = 2;
+      } else if (value >= 180 && value <= 200) {
+        newGifRange = 3;
+      }
+
+      if (newGifRange !== currentGifRange) {
+        currentGifRange = newGifRange;
+        gifImage.src = `gif${currentGifRange}.gif`;
+      }
+    }
+
+    function changeGifOnGameOver() {
+      const gifImage = document.getElementById("gifImage");
+      gifImage.src = "gif4.gif"; // 초록색 게이지가 100일 때의 변경된 GIF
+    }
+
+    function start() {
+      isStarted = true;
+      document.getElementById("clickButton").disabled = false;
+      document.getElementById("startButton").disabled = true;
+    }
+
+  function restartGame() {
+  redGaugeValue = 80;
+  greenGaugeValue = 40;
+  stopwatchTime = 0;
+  isStarted = false;
+  gameOver = false;
+  heartDisease = false;
+  currentGifRange = 0;
+
+  document.getElementById("stopwatch").textContent = "0.00";
+  document.getElementById("gaugeBarRed").style.width = "40%";
+  document.getElementById("gaugeBarGreen").style.width = "40%";
+  document.getElementById("redGaugeValue").textContent = "BPM 🫀 80";
+  document.getElementById("greenGaugeValue").textContent = "Sleep 😴 100";
+  document.getElementById("gameOver").style.display = "none";
+  document.getElementById("heartDisease").style.display = "none";
+  document.getElementById("restartButton").style.display = "none";
+  document.getElementById("clickButton").disabled = true;  // 이모티콘 버튼 비활성화
+  document.getElementById("startButton").disabled = false;
+
+  document.getElementById("gifImage").src = "gif1.gif";
+}
+
+
+    function createFloatingEmoji() {
+      const emoji = document.createElement("div");
+      emoji.classList.add("emoji");
+      emoji.textContent = "☕️";
+      const xPos = Math.random() * 80 + 10;
+      const yPos = Math.random() * 40 + 10;
+      emoji.style.left = xPos + "%";
+      emoji.style.top = yPos + "%";
+      document.body.appendChild(emoji);
+
+      // 이모티콘이 화면에서 사라지게 하는 타이머
+      setTimeout(() => {
+        emoji.remove();
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
