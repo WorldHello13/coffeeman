@@ -92,6 +92,21 @@ app.post("/add-ranking", async (req, res) => {
   }
 });
 
+app.get("/test-ip", async (req, res) => {
+  try {
+    const clientIp = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
+    const fetch = (await import("node-fetch")).default;
+
+    const geoResponse = await fetch(`http://ip-api.com/json/${clientIp}`);
+    const geoData = await geoResponse.json();
+
+    res.status(200).json(geoData);
+  } catch (error) {
+    console.error("IP API Test Error:", error);
+    res.status(500).send("IP API Test Failed");
+  }
+});
+
 
 // 정적 파일 서빙
 app.use(express.static(path.join(__dirname, 'public')));
