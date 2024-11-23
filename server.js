@@ -67,6 +67,32 @@ app.get("/rankings", async (req, res) => {
   }
 });
 
+app.post("/add-ranking", async (req, res) => {
+  const { nickname, score } = req.body;
+  console.log("Received new score submission:", { nickname, score }); // 디버깅 로그
+
+  try {
+    const fetch = (await import("node-fetch")).default;
+
+    const geoResponse = await fetch(`http://ip-api.com/json/${req.socket.remoteAddress}`);
+    const geoData = await geoResponse.json();
+    const country = geoData.country || "Unknown";
+
+    console.log("Geo data:", geoData); // IP 관련 데이터 확인
+
+    // Neo4j에 데이터 추가
+    await session.run(`
+      CREATE (r:Ranking {nickname: $nickname, score: $score, country: $country})
+    `, { nickname, score, country });
+
+    res.status(200).send("Ranking updated");
+  } catch (error) {
+    console.error("Error updating ranking:", error);
+    res.status(500).send("Error updating ranking");
+  }
+});
+
+
 // 정적 파일 서빙
 app.use(express.static(path.join(__dirname, 'public')));
 
