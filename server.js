@@ -6,7 +6,8 @@ const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
-app.set("trust proxy", true);
+app.set("trust proxy", true); // 프록시 신뢰 활성화
+
 
 // Neo4j 드라이버 설정
 const driver = neo4j.driver("bolt+s://18c363b9.databases.neo4j.io:7687", neo4j.auth.basic("neo4j", "G-nOZZdbqIVLjHPrdRwk5Xk72vqO8_JmKYn-YwHqxOs"));
@@ -17,7 +18,10 @@ const session = driver.session();
 // 새로운 기록 추가
 app.post("/add-ranking", async (req, res) => {
   const { nickname, score } = req.body;
-  const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const clientIp = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
+  console.log("Client IP detected:", clientIp); // 디버깅 로그
+
+  res.status(200).send(`Detected IP: ${clientIp}`);
 
   try {
         // IP 기반 국가 정보 API 호출 (ip-api 사용 예)
