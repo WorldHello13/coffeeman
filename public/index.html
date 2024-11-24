@@ -7,36 +7,6 @@
   <link rel="apple-touch-icon" href="123.jpeg"/> 
   <title>Coffee man</title>
   <style>
-  /* 랭킹 팝업 */
-  #rankingPopup {
-    display: none;
-    position: fixed;
-    top: 10%;
-    left: 10%;
-    width: 80%;
-    height: 80%;
-    background: white;
-    border: 2px solid black;
-    z-index: 1000;
-    overflow-y: auto; /* 스크롤 가능하게 */
-    max-height: 80%; /* 화면을 넘지 않도록 최대 높이 설정 */
-  }
-
-  /* 닉네임 입력 팝업 */
-  #nicknamePopup {
-    display: none; /* 팝업이 기본적으로 숨김 상태 */
-    position: fixed;
-    top: 20%;
-    left: 20%;
-    width: 60%;
-    background: white;
-    padding: 20px;
-    border: 2px solid black;
-    z-index: 1000;
-    max-height: 60%; /* 최대 높이 제한 */
-    overflow-y: auto; /* 스크롤 가능하게 */
-  }
-
 
     /* 스톱워치 스타일 */
     .stopwatch {
@@ -218,17 +188,41 @@
       height: 32px; /* 아이콘 높이 */
     }
 
-    #nicknamePopup {
-      display: none; /* 팝업이 기본적으로 숨김 상태 */
-      position: fixed;
-      top: 20%;
-      left: 20%;
-      width: 60%;
-      background: white;
-      padding: 20px;
-      border: 2px solid black;
-      z-index: 1000;
-    }
+/* 랭킹 팝업 */
+#rankingPopup {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  max-width: 500px; /* 최대 너비 설정 */
+  background: white;
+  border: 2px solid black;
+  z-index: 1000;
+  overflow-y: auto; /* 세로 스크롤 가능하게 */
+  max-height: 80%; /* 최대 높이 설정 */
+  padding: 10px;
+  box-sizing: border-box; /* 패딩을 포함한 너비/높이 계산 */
+  border-radius: 8px;
+}
+
+/* 닉네임 입력 팝업 */
+#nicknamePopup {
+  display: none; /* 팝업이 기본적으로 숨김 상태 */
+  position: fixed;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  background: white;
+  padding: 20px;
+  border: 2px solid black;
+  z-index: 1000;
+  max-height: 60%; /* 최대 높이 제한 */
+  overflow-y: auto; /* 세로 스크롤 가능하게 */
+  box-sizing: border-box; /* 패딩을 포함한 너비/높이 계산 */
+  border-radius: 8px;
+}
+
 
   </style>
 </head>
