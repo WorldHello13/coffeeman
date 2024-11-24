@@ -221,6 +221,7 @@
   <ol id="rankingList"></ol>
 </div>
 
+
 <script>
   function toggleRanking() {
     const popup = document.getElementById("rankingPopup");
@@ -325,9 +326,45 @@ function checkNewRecord() {
     .catch(error => console.error("Error fetching rankings:", error));
 }
 
+
+
+// 정보 팝업 열기
+function showInfo() {
+  const infoPopup = document.getElementById("infoPopup");
+  infoPopup.style.display = "block";
+}
+
+// 정보 팝업 닫기
+function closeInfo() {
+  const infoPopup = document.getElementById("infoPopup");
+  infoPopup.style.display = "none";
+}
+
+
+
 </script>
 
-
+<button id="infoButton" onclick="showInfo()">ℹ️</button>
+<!-- 정보 팝업 -->
+<div id="infoPopup" style="display: none; position: fixed; top: 20%; left: 20%; width: 60%; background: white; padding: 20px; border: 2px solid black; z-index: 1000;">
+  <h3>Game Description</h3>
+  <p>1. Press the Start button to start the game!
+    <br><br>
+    2. Press the coffee emoticon (☕️) to give coffee to Coffee Man.
+    <br><br>
+    3. The red gauge is the heart rate (BPM). If it reaches 200, Coffee Man will get heart disease and the game will be over. 😵 💔
+    <br><br>
+    4. The green gauge is the sleep gauge. If it reaches 100, Coffee Man will fall asleep and the game will be over. 😴
+    <br><br>
+    5. Press the coffee emoticon to prevent Coffee Man from falling asleep or getting heart disease!
+    <br><br>
+    6. The longer you hold out, the higher your record will go.
+    <br><br>
+    7. If it's a new record, it will be recorded in the ranking. 👊
+    <br><br>
+    8. Thank you for reading!</p>
+  <button onclick="closeInfo()">Close</button>
+</div>
 
 
   <div class="stopwatch" id="stopwatch">0.00</div>
