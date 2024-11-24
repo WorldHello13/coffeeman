@@ -6,6 +6,8 @@
   <link rel="icon" href="123.jpeg"/> 
   <link rel="apple-touch-icon" href="123.jpeg"/> 
   <title>Coffee man</title>
+  <meta property="og:image" content="public/coffeemanimage.png">
+  <meta property="og:description" content="Play coffee man Game! ☕️">
   <style>
 
     /* 스톱워치 스타일 */
@@ -223,7 +225,6 @@
   border-radius: 8px;
 
 
-  /* 닉네임 입력 팝업 */
 /* 정보 팝업 */
 #infoPopup {
   display: none;
@@ -434,6 +435,39 @@ function closeInfo() {
     <div class="game-over" id="gameOver">Game Over! The coffee man fell asleep. 😪💤</div>
   <div class="heart-disease" id="heartDisease">Game Over! Coffee Man has heart disease! 😵 💔</div>
 
+  <script>
+    function showAdditionalRandomMessage() {
+        // 게임 오버 메시지 배열
+        const randomMessages = [
+            "Did you know that? Drinking coffee increases the risk of death by 1.6 times. 😵",
+            "Did you know that? Drinking coffee can cause anxiety symptoms! 😬",
+            "Did you know that? Excessive coffee consumption can cause heart disease! ❤️‍🩹",
+            "Did you know that? It takes over 12 hours for caffeine to break down! 😵‍💫",
+            "Did you know that? Consuming caffeine reduces sleep efficiency by as much as 20%! 🥱🌟"
+        ];
+
+        // 랜덤 인덱스 생성
+        const randomIndex = Math.floor(Math.random() * randomMessages.length);
+        const randomMessage = randomMessages[randomIndex];
+
+        // 랜덤 메시지를 추가로 표시
+        const randomMessageElement = document.createElement("div");
+        randomMessageElement.textContent = randomMessage;
+
+        // 스타일 설정
+        randomMessageElement.style.color = "blue"; // 파란색 텍스트
+        randomMessageElement.style.fontSize = "18px"; // 텍스트 크기
+        randomMessageElement.style.marginTop = "10px"; // 위쪽 여백
+        randomMessageElement.style.textAlign = "center";  // 텍스트 중앙 정렬
+        randomMessageElement.style.width = "100%"; // 전체 너비
+        randomMessageElement.style.display = "block"; // 블록 레벨 요소로 설정
+
+        // 기존 게임 오버 메시지 아래에 추가
+        const gameOverElement = document.getElementById("gameOver");
+        gameOverElement.parentNode.insertBefore(randomMessageElement, gameOverElement.nextSibling);
+    }
+  </script>
+
   <button class="start-button" id="startButton" onclick="start()">Start</button>
   <button class="emoji-button" id="clickButton" onclick="adjustGauges()" disabled>☕️</button>
 
@@ -481,11 +515,12 @@ function closeInfo() {
 
         if (greenGaugeValue >= 100) {
           gameOver = true;
-          document.getElementById("gameOver").style.display = "block";
+          document.getElementById("gameOver").style.display = "block"; // 기존 메시지 표시
+          showAdditionalRandomMessage(); // 랜덤 메시지 추가
           document.getElementById("restartButton").style.display = "block";
           document.getElementById("clickButton").disabled = true;
-          changeGifOnGameOver(); // 초록색 게이지가 100일 때 GIF 변경
-          checkNewRecord(); // 신기록 확인 함수 호출 추가
+          changeGifOnGameOver();
+          checkNewRecord();
         }
       }
     }
@@ -514,10 +549,11 @@ function closeInfo() {
 
         if (redGaugeValue === 200) {
           heartDisease = true;
-          document.getElementById("heartDisease").style.display = "block";
+          document.getElementById("heartDisease").style.display = "block"; // 기존 메시지 표시
+          showAdditionalRandomMessage(); // 랜덤 메시지 추가
           document.getElementById("restartButton").style.display = "block";
           document.getElementById("clickButton").disabled = true;
-          checkNewRecord(); // 신기록 확인 함수 호출 추가
+          checkNewRecord();
         }
       }
 
