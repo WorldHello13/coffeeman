@@ -455,17 +455,21 @@ function closeInfo() {
         randomMessageElement.textContent = randomMessage;
 
         // 스타일 설정
-        randomMessageElement.style.color = "blue"; // 파란색 텍스트
-        randomMessageElement.style.fontSize = "18px"; // 텍스트 크기
-        randomMessageElement.style.marginTop = "10px"; // 위쪽 여백
-        randomMessageElement.style.textAlign = "center";  // 텍스트 중앙 정렬
-        randomMessageElement.style.width = "100%"; // 전체 너비
-        randomMessageElement.style.display = "block"; // 블록 레벨 요소로 설정
+        randomMessageElement.style.color = "blue";
+        randomMessageElement.style.fontSize = "18px";
+        randomMessageElement.style.marginTop = "10px";
+        randomMessageElement.style.textAlign = "center";
+        randomMessageElement.style.width = "100%";
+        randomMessageElement.style.display = "block";
+
+        // 특정 클래스를 추가
+        randomMessageElement.classList.add("random-message");
 
         // 기존 게임 오버 메시지 아래에 추가
         const gameOverElement = document.getElementById("gameOver");
         gameOverElement.parentNode.insertBefore(randomMessageElement, gameOverElement.nextSibling);
     }
+
   </script>
 
   <button class="start-button" id="startButton" onclick="start()">Start</button>
@@ -589,28 +593,33 @@ function closeInfo() {
       document.getElementById("startButton").disabled = true;
     }
 
-  function restartGame() {
-  redGaugeValue = 80;
-  greenGaugeValue = 40;
-  stopwatchTime = 0;
-  isStarted = false;
-  gameOver = false;
-  heartDisease = false;
-  currentGifRange = 0;
+    function restartGame() {
+      redGaugeValue = 80;
+      greenGaugeValue = 40;
+      stopwatchTime = 0;
+      isStarted = false;
+      gameOver = false;
+      heartDisease = false;
+      currentGifRange = 0;
 
-  document.getElementById("stopwatch").textContent = "0.00";
-  document.getElementById("gaugeBarRed").style.width = "40%";
-  document.getElementById("gaugeBarGreen").style.width = "40%";
-  document.getElementById("redGaugeValue").textContent = "BPM 🫀 80";
-  document.getElementById("greenGaugeValue").textContent = "Sleep 😴 100";
-  document.getElementById("gameOver").style.display = "none";
-  document.getElementById("heartDisease").style.display = "none";
-  document.getElementById("restartButton").style.display = "none";
-  document.getElementById("clickButton").disabled = true;  // 이모티콘 버튼 비활성화
-  document.getElementById("startButton").disabled = false;
+      document.getElementById("stopwatch").textContent = "0.00";
+      document.getElementById("gaugeBarRed").style.width = "40%";
+      document.getElementById("gaugeBarGreen").style.width = "40%";
+      document.getElementById("redGaugeValue").textContent = "BPM 🫀 80";
+      document.getElementById("greenGaugeValue").textContent = "Sleep 😴 100";
+      document.getElementById("gameOver").style.display = "none";
+      document.getElementById("heartDisease").style.display = "none";
+      document.getElementById("restartButton").style.display = "none";
+      document.getElementById("clickButton").disabled = true;
+      document.getElementById("startButton").disabled = false;
 
-  document.getElementById("gifImage").src = "gif1.gif";
+      document.getElementById("gifImage").src = "gif1.gif";
+
+      // 추가된 랜덤 메시지 제거
+      const randomMessages = document.querySelectorAll(".random-message");
+      randomMessages.forEach((message) => message.remove());
 }
+
 
 
     function createFloatingEmoji() {
