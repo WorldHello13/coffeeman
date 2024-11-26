@@ -7,7 +7,7 @@
   <link rel="apple-touch-icon" href="123.jpeg"/> 
   <title>Coffee man</title>
   <meta property="og:image" content="coffeemanimage.png">
-  <meta property="og:description" content="Play coffee man Game! ☕️">
+  <meta property="og:description" content="Play Coffee Man Game! ☕️">
   <style>
 
     /* 스톱워치 스타일 */
@@ -171,8 +171,8 @@
         opacity: 1;
       }
       100% {
-        transform: translateY(-100px); /* 위로 이동 */
-        opacity: 0; /* 점점 투명해짐 */
+        transform: translateY(-100px);
+        opacity: 0;
       }
     }
     /* 전체 화면 버튼 스타일 */
@@ -248,10 +248,6 @@
   </style>
 </head>
 <body>
-  <script>
-  //  window.onload = function() {
-    //        alert('New to you? Tap the ℹ️ on the left to see how to play it!");
-  </script>
   <button id="fullscreenButton" onclick="toggleFullscreen()">
     <img src="fullscreen_icon_137565.png" alt="전체 화면">
   </button>
@@ -309,6 +305,14 @@
 </div>
 
 <script>
+let stopwatchFinalValue = null;
+
+function saveFinalStopwatchValue() {
+    if (stopwatchFinalValue === null) { 
+      stopwatchFinalValue = parseFloat(stopwatchTime.toFixed(2));
+    }
+}
+
 async function submitScore() {
   const nickname = document.getElementById("nicknameInput").value;
 
@@ -327,7 +331,7 @@ async function submitScore() {
     const response = await fetch(`${window.location.origin}/add-ranking`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname, score: stopwatchValue }),
+      body: JSON.stringify({ nickname, score: stopwatchFinalValue }),
     });
 
     if (!response.ok) {
@@ -447,7 +451,7 @@ function closeInfo() {
             "Did you know that? Drinking coffee can cause anxiety symptoms! 😬",
             "Did you know that? Excessive coffee consumption can cause heart disease! ❤️‍🩹",
             "Did you know that? It takes over 12 hours for caffeine to break down! 😵‍💫",
-            "Did you know that? Consuming caffeine reduces sleep efficiency by as much as 20%! 🥱"
+            "Did you know that? Consuming caffeine reduces sleep efficiency by as much as 20%! 🥱🌟"
         ];
 
         // 랜덤 인덱스 생성
@@ -480,7 +484,7 @@ function closeInfo() {
   <button class="emoji-button" id="clickButton" onclick="adjustGauges()" disabled>☕️</button>
 
   <script>
-        function toggleFullscreen() {
+    function toggleFullscreen() {
       if (!document.fullscreenElement) {
           document.documentElement.requestFullscreen().catch(err => {
           console.error(`Error attempting to enable full-screen mode: ${err.message}`);
@@ -523,6 +527,7 @@ function closeInfo() {
 
         if (greenGaugeValue >= 100) {
           gameOver = true;
+          saveFinalStopwatchValue();
           document.getElementById("gameOver").style.display = "block"; // 기존 메시지 표시
           showAdditionalRandomMessage(); // 랜덤 메시지 추가
           document.getElementById("restartButton").style.display = "block";
@@ -557,6 +562,7 @@ function closeInfo() {
 
         if (redGaugeValue === 200) {
           heartDisease = true;
+          saveFinalStopwatchValue();
           document.getElementById("heartDisease").style.display = "block"; // 기존 메시지 표시
           showAdditionalRandomMessage(); // 랜덤 메시지 추가
           document.getElementById("restartButton").style.display = "block";
@@ -598,6 +604,7 @@ function closeInfo() {
     }
 
     function restartGame() {
+      stopwatchFinalValue = null; 
       redGaugeValue = 80;
       greenGaugeValue = 40;
       stopwatchTime = 0;
