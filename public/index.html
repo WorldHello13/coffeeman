@@ -9,6 +9,7 @@
   <meta property="og:image" content="coffeemanimage.png">
   <meta property="og:description" content="Play Coffee Man Game! ☕️">
   <style>
+
     /* 스톱워치 스타일 */
     .stopwatch {
       text-align: center;
@@ -31,7 +32,7 @@
 
     /* 빨간색 게이지 바 스타일 */
     .gauge-bar-red {
-      width: 0%;
+      width: 40%;
       height: 100%;
       background-color: red;
       transition: width 0.3s ease;
@@ -41,7 +42,7 @@
 
     /* 초록색 게이지 바 스타일 */
     .gauge-bar-green {
-      width: 100%;
+      width: 40%;
       height: 100%;
       background-color: green;
       transition: width 0.3s ease;
@@ -275,23 +276,24 @@
   }
 
   async function loadRankings() {
-    try {
-      const API_BASE_URL = window.location.origin; // 현재 배포된 도메인 동적으로 설정
-      const response = await fetch(`${API_BASE_URL}/rankings`); // 동적 URL 사용
-      const rankings = await response.json();
+  try {
+    const API_BASE_URL = window.location.origin; // 현재 배포된 도메인 동적으로 설정
+    const response = await fetch(`${API_BASE_URL}/rankings`); // 동적 URL 사용
+    const rankings = await response.json();
 
-      const rankingList = document.getElementById("rankingList");
-      rankingList.innerHTML = "";
+    const rankingList = document.getElementById("rankingList");
+    rankingList.innerHTML = "";
 
-      rankings.forEach((rank, index) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"})`;
-        rankingList.appendChild(listItem);
-      });
-    } catch (error) {
-      console.error("Error loading rankings:", error);
-    }
+    // 상위 25개의 랭킹만 표시
+    rankings.slice(0, 25).forEach((rank, index) => {
+      const listItem = document.createElement("li");
+      listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"})`;
+      rankingList.appendChild(listItem);
+    });
+  } catch (error) {
+    console.error("Error loading rankings:", error);
   }
+}
 
 
   document.getElementById("rankingButton").addEventListener("click", loadRankings);
@@ -364,13 +366,16 @@ function checkNewRecord() {
       return response.json();
     })
     .then(rankings => {
-      console.log("Rankings fetched successfully:", rankings); // 랭킹 데이터 로그
-      const lowestScore = rankings.length > 0 ? parseFloat(rankings[rankings.length - 1].score) : 0;
-      
-      console.log(`Stopwatch Value: ${stopwatchValue}, Lowest Score: ${lowestScore}`); // 비교 값 출력
+      console.log("Rankings fetched successfully:", rankings);
 
-      // 신기록 조건 확인
-      if (rankings.length < 100 || stopwatchValue > lowestScore) {
+      // 상위 25위까지만 확인
+      const top25 = rankings.slice(0, 25);
+      const lowestScoreInTop25 = top25.length > 0 ? parseFloat(top25[top25.length - 1].score) : 0;
+
+      console.log(`Stopwatch Value: ${stopwatchValue}, Lowest Score in Top 25: ${lowestScoreInTop25}`);
+
+      // 25위 내에 들어갈 경우 텍스트 입력창 표시
+      if (top25.length < 25 || stopwatchValue > lowestScoreInTop25) {
         document.getElementById("nicknamePopup").style.display = "block";
         console.log("New record! Showing nickname input.");
       } else {
@@ -379,6 +384,7 @@ function checkNewRecord() {
     })
     .catch(error => console.error("Error fetching rankings:", error));
 }
+
 
 
 
@@ -629,6 +635,9 @@ function closeInfo() {
       // 추가된 랜덤 메시지 제거
       const randomMessages = document.querySelectorAll(".random-message");
       randomMessages.forEach((message) => message.remove());
+      // 텍스트 입력창 숨기기 및 초기화
+      document.getElementById("nicknamePopup").style.display = "none";
+      document.getElementById("nicknameInput").value = "";
 }
 
 
