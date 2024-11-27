@@ -346,28 +346,33 @@ if (!nickname) {
 function checkNewRecord() {
   const stopwatchValue = parseFloat(document.getElementById("stopwatch").textContent);
 
-  fetch(`${window.location.origin}/rankings`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(rankings => {
-      console.log("Rankings fetched successfully:", rankings); // 랭킹 데이터 로그
-      const lowestScore = rankings.length === 100 ? parseFloat(rankings[rankings.length - 1].score) : 0;
-      
-      console.log(`Stopwatch Value: ${stopwatchValue}, Lowest Score: ${lowestScore}`); // 비교 값 출력
+fetch(`${window.location.origin}/rankings`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(rankings => {
+    // 데이터 검증
+    if (!Array.isArray(rankings) || rankings.length === 0) {
+      console.error("Invalid rankings data:", rankings);
+      return;
+    }
 
-      // 신기록 조건 확인
-      if (rankings.length < 100 || stopwatchValue > lowestScore) {
-        document.getElementById("nicknamePopup").style.display = "block";
-        console.log("New record! Showing nickname input.");
-      } else {
-        console.log("Not a new record. Current score:", stopwatchValue);
-      }
-    })
-    .catch(error => console.error("Error fetching rankings:", error));
+    // 점수 정렬
+    rankings.sort((a, b) => b.score - a.score);
+
+    // 기존 로직 수행
+    const lowestScore = rankings.length === 100 
+      ? parseFloat(rankings[rankings.length - 1].score) 
+      : 0;
+
+    if (rankings.length < 100 || stopwatchValue > lowestScore) {
+      document.getElementById("nicknamePopup").style.display = "block";
+    }
+  })
+  .catch(error => console.error("Error fetching rankings:", error));
 }
 
 
