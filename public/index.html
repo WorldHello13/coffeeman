@@ -270,14 +270,30 @@
 
 
 <script>
+  // REST Countries API를 호출하여 국가 코드를 가져오는 함수
+  async function fetchCountryCode(countryName) {
+    try {
+      const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
+      if (!response.ok) throw new Error(`Error fetching country: ${response.statusText}`);
+      
+      const data = await response.json();
+      return data[0].cca2; // ISO 3166-1 alpha-2 코드 반환
+    } catch (error) {
+      console.error("Error fetching country code:", error);
+      return null; // 에러 발생 시 null 반환
+    }
+  }
+
+  // ISO 코드를 플래그 이모티콘으로 변환
   function getFlagForCountryCode(countryCode) {
-    if (!countryCode || countryCode.length !== 2) return "🏳️"; // 국가 코드가 없거나 잘못된 경우 무색 국기 반환
+    if (!countryCode) return "🏳️"; // 국가 코드가 없으면 무색 국기
     return countryCode
       .toUpperCase()
       .split('')
       .map(char => String.fromCodePoint(127397 + char.charCodeAt()))
       .join('');
   }
+
 
   function toggleRanking() {
     const popup = document.getElementById("rankingPopup");
