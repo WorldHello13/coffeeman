@@ -270,31 +270,6 @@
 
 
 <script>
-  // REST Countries API를 호출하여 국가 코드를 가져오는 함수
-  async function fetchCountryCode(countryName) {
-    try {
-      const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
-      if (!response.ok) throw new Error(`Error fetching country: ${response.statusText}`);
-      
-      const data = await response.json();
-      return data[0].cca2; // ISO 3166-1 alpha-2 코드 반환
-    } catch (error) {
-      console.error("Error fetching country code:", error);
-      return null; // 에러 발생 시 null 반환
-    }
-  }
-
-  // ISO 코드를 플래그 이모티콘으로 변환
-  function getFlagForCountryCode(countryCode) {
-    if (!countryCode) return "🏳️"; // 국가 코드가 없으면 무색 국기
-    return countryCode
-      .toUpperCase()
-      .split('')
-      .map(char => String.fromCodePoint(127397 + char.charCodeAt()))
-      .join('');
-  }
-
-
   function toggleRanking() {
     const popup = document.getElementById("rankingPopup");
     popup.style.display = popup.style.display === "none" ? "block" : "none";
@@ -312,12 +287,7 @@
     // 상위 25개의 랭킹만 표시
     rankings.slice(0, 25).forEach((rank, index) => {
       const listItem = document.createElement("li");
-
-      // 국가 코드로 플래그 가져오기
-      const flag = getFlagForCountryCode(rank.countryCode);
-
-      // 랭킹 항목 작성
-      listItem.textContent = `${index + 1}. ${rank.nickname} - ${rank.score} (${rank.country || "Unknown"} ${flag})`;
+      listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"})`;
       rankingList.appendChild(listItem);
     });
   } catch (error) {
@@ -383,6 +353,7 @@ async function submitScore() {
     alert("Failed to save the score. Please try again.");
   }
 }
+
 
 function checkNewRecord() {
   const stopwatchValue = parseFloat(document.getElementById("stopwatch").textContent);
