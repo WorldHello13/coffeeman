@@ -270,6 +270,15 @@
 
 
 <script>
+  function getFlagForCountryCode(countryCode) {
+    if (!countryCode || countryCode.length !== 2) return "🏳️"; // 국가 코드가 없거나 잘못된 경우 무색 국기 반환
+    return countryCode
+      .toUpperCase()
+      .split('')
+      .map(char => String.fromCodePoint(127397 + char.charCodeAt()))
+      .join('');
+  }
+
   function toggleRanking() {
     const popup = document.getElementById("rankingPopup");
     popup.style.display = popup.style.display === "none" ? "block" : "none";
@@ -287,7 +296,12 @@
     // 상위 25개의 랭킹만 표시
     rankings.slice(0, 25).forEach((rank, index) => {
       const listItem = document.createElement("li");
-      listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"})`;
+
+      // 국가 코드로 플래그 가져오기
+      const flag = getFlagForCountryCode(rank.countryCode);
+
+      // 랭킹 항목 작성
+      listItem.textContent = `${index + 1}. ${rank.nickname} - ${rank.score} (${rank.country || "Unknown"} ${flag})`;
       rankingList.appendChild(listItem);
     });
   } catch (error) {
@@ -353,7 +367,6 @@ async function submitScore() {
     alert("Failed to save the score. Please try again.");
   }
 }
-
 
 function checkNewRecord() {
   const stopwatchValue = parseFloat(document.getElementById("stopwatch").textContent);
