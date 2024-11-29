@@ -275,48 +275,25 @@
     popup.style.display = popup.style.display === "none" ? "block" : "none";
   }
 
-  async function getCountryCodeFromIP(ip) {
+  async function loadRankings() {
   try {
-    const response = await fetch(`https://ip-api.com/json/${ip}`);
-    const data = await response.json();
-    return data.countryCode || null; // 국가 코드 반환
-  } catch (error) {
-    console.error("Error fetching country code:", error);
-    return null; // 실패 시 null 반환
-  }
-}
-
-function countryCodeToEmoji(countryCode) {
-  if (!countryCode) return "🏳"; // 알 수 없는 경우
-  return countryCode
-    .toUpperCase()
-    .replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt()));
-}
-
-async function loadRankings() {
-  try {
-    const API_BASE_URL = window.location.origin;
-    const response = await fetch(`${API_BASE_URL}/rankings`);
+    const API_BASE_URL = window.location.origin; // 현재 배포된 도메인 동적으로 설정
+    const response = await fetch(`${API_BASE_URL}/rankings`); // 동적 URL 사용
     const rankings = await response.json();
 
     const rankingList = document.getElementById("rankingList");
     rankingList.innerHTML = "";
 
-    for (const rank of rankings.slice(0, 25)) {
+    // 상위 25개의 랭킹만 표시
+    rankings.slice(0, 25).forEach((rank, index) => {
       const listItem = document.createElement("li");
-
-      // IP에서 국가 코드 가져오기
-      const countryCode = await getCountryCodeFromIP(rank.ip);
-      const countryEmoji = countryCodeToEmoji(countryCode);
-
-      listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"} ${countryEmoji})`;
+      listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"})`;
       rankingList.appendChild(listItem);
-    }
+    });
   } catch (error) {
     console.error("Error loading rankings:", error);
   }
 }
-
 
 
   document.getElementById("rankingButton").addEventListener("click", loadRankings);
