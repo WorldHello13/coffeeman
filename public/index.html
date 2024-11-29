@@ -275,7 +275,35 @@
     popup.style.display = popup.style.display === "none" ? "block" : "none";
   }
 
-  async function loadRankings() {
+// 사용자의 국가 코드를 자동으로 가져오기 (IP 정보 활용)
+async function getCountryCodeFromIP() {
+  try {
+    const response = await fetch("https://ipinfo.io?token=YOUR_API_KEY"); // ipinfo.io API 사용
+    const data = await response.json();
+    const countryCode = data.country; // 예: 'KR', 'US', 'FR' 등
+    return countryCode;
+  } catch (error) {
+    console.error("Error fetching country code:", error);
+    return null; // 국가 코드를 가져오지 못한 경우
+  }
+}
+
+  
+// 국가 코드를 플래그 이모티콘으로 변환하는 함수
+function getCountryFlagEmoji(countryCode) {
+  if (!countryCode || countryCode.length !== 2) {
+    return "🏳️"; // 기본 깃발 (국가 정보 없음)
+  }
+
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt());
+  return String.fromCodePoint(...codePoints);
+}
+
+// 랭킹 로드 함수
+async function loadRankings() {
   try {
     const API_BASE_URL = window.location.origin; // 현재 배포된 도메인 동적으로 설정
     const response = await fetch(`${API_BASE_URL}/rankings`); // 동적 URL 사용
@@ -286,8 +314,12 @@
 
     // 상위 25개의 랭킹만 표시
     rankings.slice(0, 25).forEach((rank, index) => {
+      const codePoints = rank.country
+        ? getCountryFlagEmoji(rank.country) // 국가 코드로 플래그 변환
+        : "🏳️"; // 국가 정보가 없을 경우 기본값
+
       const listItem = document.createElement("li");
-      listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"})`;
+      listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"}) ${codePoints}`;
       rankingList.appendChild(listItem);
     });
   } catch (error) {
@@ -295,8 +327,9 @@
   }
 }
 
+// 랭킹 버튼 클릭 시 랭킹 로드
+document.getElementById("rankingButton").addEventListener("click", loadRankings);
 
-  document.getElementById("rankingButton").addEventListener("click", loadRankings);
 </script>
 
 
@@ -314,6 +347,7 @@ function saveFinalStopwatchValue() {
       stopwatchFinalValue = parseFloat(stopwatchTime.toFixed(2));
     }
 }
+
 
 async function submitScore() {
   const nickname = document.getElementById("nicknameInput").value;
