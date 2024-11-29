@@ -284,55 +284,16 @@
     const rankingList = document.getElementById("rankingList");
     rankingList.innerHTML = "";
 
-    // REST Countries API 호출 함수 - 국가 이름 가져오기
-    async function getCountryName(countryCode) {
-      try {
-        const countryResponse = await fetch(`https://restcountries.com/v3.1/alpha/${countryCode}`);
-        if (!countryResponse.ok) {
-          throw new Error(`Country not found for code: ${countryCode}`);
-        }
-        const countryData = await countryResponse.json();
-        return countryData[0].name.common || "Unknown"; // 국가 이름 반환
-      } catch (error) {
-        console.error(`Error fetching country name for code ${countryCode}:`, error);
-        return "Unknown"; // 기본값
-      }
-    }
-
-    // 국가 코드를 이모티콘으로 변환하는 함수
-    function getCountryEmoji(countryCode) {
-      // 유니코드 플래그 계산
-      if (countryCode.length === 2) {
-        return countryCode
-          .toUpperCase()
-          .split("")
-          .map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
-          .join("");
-      }
-      return "🌍"; // 기본값: 지구본
-    }
-
     // 상위 25개의 랭킹만 표시
-    for (const rank of rankings.slice(0, 25)) {
+    rankings.slice(0, 25).forEach((rank, index) => {
       const listItem = document.createElement("li");
-      const countryCode = rank.country || "Unknown";
-
-      // 국가 이름 및 이모티콘 가져오기
-      let countryName = "Unknown";
-      let countryEmoji = "🌍";
-      if (countryCode !== "Unknown") {
-        countryName = await getCountryName(countryCode);
-        countryEmoji = getCountryEmoji(countryCode);
-      }
-
-      listItem.textContent = `${rank.nickname} - ${rank.score} (${countryEmoji} ${countryName})`;
+      listItem.textContent = `${rank.nickname} - ${rank.score} (${rank.country || "Unknown"})`;
       rankingList.appendChild(listItem);
-    }
+    });
   } catch (error) {
     console.error("Error loading rankings:", error);
   }
 }
-
 
 
   document.getElementById("rankingButton").addEventListener("click", loadRankings);
