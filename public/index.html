@@ -270,6 +270,69 @@
 
 
 <script>
+        // F12 및 개발자 도구 차단
+        document.addEventListener('keydown', function(event) {
+            // F12 키 (keyCode는 123)
+            if (event.keyCode === 123) {
+                event.preventDefault();  // 기본 동작을 취소
+                alert('F12 개발자 도구 사용이 차단되었습니다!');
+            }
+
+            // Ctrl + Shift + I (개발자 도구)
+            if (event.ctrlKey && event.shiftKey && event.keyCode === 73) { // Ctrl + Shift + I
+                event.preventDefault();
+                alert('개발자 도구가 비활성화되었습니다!');
+            }
+
+            // Ctrl + U (페이지 소스 보기)
+            if (event.ctrlKey && event.keyCode === 85) {
+                event.preventDefault();
+                alert('페이지 소스를 볼 수 없습니다!');
+            }
+        });
+
+        // 우클릭 방지
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();  // 기본 우클릭 메뉴를 차단
+            alert('우클릭이 비활성화되었습니다!');
+        });
+
+        // 개발자 도구 감지 (F12가 열렸을 때 감지하는 방법)
+        (function() {
+            var devtools = /./;
+            devtools.toString = function() {
+                alert("개발자 도구가 열렸습니다! 사용하지 마세요.");
+            };
+            setInterval(function() {
+                console.log(devtools);
+            }, 1000);
+        })();
+
+        // 화면을 떠나거나 새로고침하려 할 때 경고 표시
+        window.onbeforeunload = function() {
+            return "페이지를 떠나면 변경 사항이 저장되지 않습니다!";
+        };
+
+        // JavaScript 디버깅 방지 (자바스크립트 디버거 감지)
+        var isDebugging = false;
+        function detectDebugger() {
+            var start = new Date();
+            debugger; // 디버거가 활성화되면 타이밍을 기록
+            setInterval(function() {
+                if (new Date() - start > 100) {
+                    if (!isDebugging) {
+                        isDebugging = true;
+                        alert("디버깅이 감지되었습니다! 디버깅을 중지해주세요.");
+                    }
+                }
+            }, 100);
+        }
+
+        // 디버깅 감지 시작
+        window.onload = function() {
+            detectDebugger();
+        };
+
   function toggleRanking() {
     const popup = document.getElementById("rankingPopup");
     popup.style.display = popup.style.display === "none" ? "block" : "none";
