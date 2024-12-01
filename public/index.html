@@ -276,26 +276,26 @@
                 // F12 키 (keyCode는 123)
                 if (event.keyCode === 123) {
                     event.preventDefault();  // 기본 동작을 취소
-                    alert('F12 개발자 도구 사용이 차단되었습니다!');
+                    alert('Use of F12 developer tools is blocked!');
                 }
 
                 // Ctrl + Shift + I (개발자 도구)
                 if (event.ctrlKey && event.shiftKey && event.keyCode === 73) { // Ctrl + Shift + I
                     event.preventDefault();
-                    alert('개발자 도구가 비활성화되었습니다!');
+                    alert('Developer tools are disabled!');
                 }
 
                 // Ctrl + U (페이지 소스 보기)
                 if (event.ctrlKey && event.keyCode === 85) {
                     event.preventDefault();
-                    alert('페이지 소스를 볼 수 없습니다!');
+                    alert('Can not view page source!');
                 }
             });
 
             // 우클릭 방지
             document.addEventListener('contextmenu', function(event) {
                 event.preventDefault();  // 기본 우클릭 메뉴를 차단
-                alert('우클릭이 비활성화되었습니다!');
+                alert('Right click is disabled!');
             });
         }
 
@@ -306,7 +306,7 @@
 
         // 페이지가 새로고침되거나 다른 탭으로 전환되어도 계속 유지
         window.onbeforeunload = function() {
-            return "페이지를 떠나면 변경 사항이 저장되지 않습니다!";
+            return "Your changes will not be saved if you leave the page!";
         };
 
         // 브라우저 창을 떠날 때 F12 차단 유지
